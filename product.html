@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+{% if not product %}
+  <h1>Product not found</h1>
+  <p>Sorry, we couldn’t find that product.</p>
+{% else %}
+<section class="product-detail">
+  <div class="pd-gallery">
+    <img src="{{ product.image }}" alt="{{ product.name }}" />
+  </div>
+  <div class="pd-info">
+    <h1>{{ product.name }}</h1>
+    <div class="rating big">
+      {% for s in product.rating|stars %}
+        {% if s == 'full' %}<span class="star full">★</span>{% elif s == 'half' %}<span class="star half">★</span>{% else %}<span class="star">☆</span>{% endif %}
+      {% endfor %}
+      <span class="rating-num">{{ '%.1f'|format(product.rating) }}</span>
+    </div>
+    <div class="pd-price">$ {{ '%.2f'|format(product.price) }}</div>
+    <p class="pd-desc">{{ product.description }}</p>
+
+    <form class="qty-row add-form" data-pid="{{ product.id }}">
+      <label for="qty">Qty</label>
+      <input type="number" min="1" value="1" name="qty" id="qty">
+      <input type="hidden" name="pid" value="{{ product.id }}">
+      <button class="btn primary" type="submit">Add to cart</button>
+    </form>
+
+    <ul class="pd-bullets">
+      <li>30‑day returns</li>
+      <li>Secure checkout</li>
+      <li>Ships next business day</li>
+    </ul>
+  </div>
+</section>
+
+{% if related %}
+<h2 class="section-title">You might also like</h2>
+<section class="grid">
+  {% for p in related %}
+  <article class="card">
+    <a href="{{ url_for('product_page', pid=p.id) }}" class="image-wrap">
+      <img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy" />
+    </a>
+    <div class="card-body">
+      <h3 class="product-title"><a href="{{ url_for('product_page', pid=p.id) }}">{{ p.name }}</a></h3>
+      <div class="price">$ {{ '%.2f'|format(p.price) }}</div>
+      <form class="add-form" data-pid="{{ p.id }}">
+        <input type="hidden" name="pid" value="{{ p.id }}">
+        <button class="btn primary block" type="submit">Add to cart</button>
+      </form>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% endif %}
+{% endif %}
+{% endblock %}

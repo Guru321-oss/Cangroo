@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ site_name|capitalize }} — hop into style</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23554cff' d='M17 35c-7 3-9 12-5 17s13 6 18-1c3-4 3-9 2-14l9-6c7 5 15 7 21 2-1-8-7-12-13-13l-7 3c-3-4-6-7-9-9-6-4-15-3-17 5-2 6 0 12 5 16l-4 0z'/%3E%3C/svg%3E" />
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="{{ url_for('index') }}" aria-label="Cangroo home">
+    <span class="logo" aria-hidden="true">
+      <!-- Kangaroo-ish logo -->
+      <svg viewBox="0 0 64 64" role="img" focusable="false">
+        <path d="M17 35c-7 3-9 12-5 17s13 6 18-1c3-4 3-9 2-14l9-6c7 5 15 7 21 2-1-8-7-12-13-13l-7 3c-3-4-6-7-9-9-6-4-15-3-17 5-2 6 0 12 5 16l-4 0z" />
+      </svg>
+    </span>
+    <span class="wordmark">cangroo</span>
+  </a>
+
+  <form class="search" action="{{ url_for('index') }}" method="get" role="search">
+    <input type="search" name="q" id="q" placeholder="Search products…" value="{{ request.args.get('q','') }}" autocomplete="off" />
+    <button class="btn primary" type="submit">Search</button>
+    <div id="search-suggest" class="suggestions" hidden></div>
+  </form>
+
+  <nav class="main-nav">
+    <a href="{{ url_for('cart_page') }}" class="cart-link" aria-label="Shopping cart">
+      <span class="icon">🛒</span>
+      <span class="cart-count" id="cart-count">{{ cart_count }}</span>
+    </a>
+  </nav>
+</header>
+
+<main class="container">
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% if msgs %}
+    <div class="flash-wrap">
+      {% for cat, msg in msgs %}
+      <div class="flash {{cat}}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <h4>About Cangroo</h4>
+      <p>We craft everyday gear with springy energy and durable materials. Hop further. ♻️</p>
+    </div>
+    <div>
+      <h4>Categories</h4>
+      <ul class="link-col">
+        {% for c in categories %}
+          <li><a href="{{ url_for('index', cat=c) }}">{{ c }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <h4>Newsletter</h4>
+      <form class="mini-form" onsubmit="event.preventDefault(); alert('Subscribed! 💌');">
+        <input type="email" placeholder="Email address" required />
+        <button class="btn">Subscribe</button>
+      </form>
+    </div>
+  </div>
+  <p class="fine">© {{ 2025 }} Cangroo. Built with Flask, HTML, CSS & JS.</p>
+</footer>
+
+<script>window.CANGROO = { addToCartUrl: "{{ url_for('add_to_cart') }}", updateCartUrl: "{{ url_for('update_cart') }}", removeUrl: "{{ url_for('remove_from_cart') }}", searchUrl: "{{ url_for('search_api') }}" };</script>
+<script src="{{ url_for('static', filename='main.js') }}" defer></script>
+</body>
+</html>

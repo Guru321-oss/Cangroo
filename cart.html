@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Your cart</h1>
+
+{% if not items %}
+  <p>Your cart is empty. <a href="{{ url_for('index') }}">Keep shopping →</a></p>
+{% else %}
+<div class="cart-layout">
+  <section class="cart-items">
+    {% for row in items %}
+    <article class="cart-row" data-pid="{{ row.product.id }}">
+      <img src="{{ row.product.image }}" alt="{{ row.product.name }}" class="thumb">
+      <div class="ci-main">
+        <h3>{{ row.product.name }}</h3>
+        <p class="muted">{{ row.product.category }}</p>
+        <button class="link danger remove-btn" data-pid="{{ row.product.id }}">Remove</button>
+      </div>
+      <div class="ci-qty">
+        <label>Qty</label>
+        <input type="number" min="1" value="{{ row.qty }}" class="qty-input" data-pid="{{ row.product.id }}">
+      </div>
+      <div class="ci-price">$ {{ '%.2f'|format(row.product.price) }}</div>
+      <div class="ci-total">$ {{ '%.2f'|format(row.line_total) }}</div>
+    </article>
+    {% endfor %}
+  </section>
+
+  <aside class="summary">
+    <h2>Order summary</h2>
+    <dl>
+      <div><dt>Subtotal</dt><dd id="sum-sub">$ {{ '%.2f'|format(subtotal) }}</dd></div>
+      <div><dt>Shipping</dt><dd id="sum-ship">$ {{ '%.2f'|format(shipping) }}</dd></div>
+      <div><dt>Tax</dt><dd id="sum-tax">$ {{ '%.2f'|format(tax) }}</dd></div>
+      <div class="total"><dt>Total</dt><dd id="sum-total">$ {{ '%.2f'|format(total) }}</dd></div>
+    </dl>
+    <a class="btn primary block" href="{{ url_for('checkout') }}">Checkout</a>
+    <a class="btn ghost block" href="{{ url_for('index') }}">Continue shopping</a>
+  </aside>
+</div>
+{% endif %}
+{% endblock %}

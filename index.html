@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="hero-inner">
+    <h1>Hop into style</h1>
+    <p>Thoughtful essentials for everyday adventures. Free shipping over $100.</p>
+    <div class="pill-bar">
+      <a class="pill {% if not active_cat %}active{% endif %}" href="{{ url_for('index') }}">All</a>
+      {% for c in categories %}
+        <a class="pill {% if active_cat==c %}active{% endif %}" href="{{ url_for('index', cat=c) }}">{{ c }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if query %}
+<p class="muted">Showing results for “<strong>{{ query }}</strong>”.</p>
+{% endif %}
+
+<section class="grid">
+  {% for p in products %}
+  <article class="card">
+    <a href="{{ url_for('product_page', pid=p.id) }}" class="image-wrap">
+      <img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy" />
+    </a>
+    <div class="card-body">
+      <h3 class="product-title"><a href="{{ url_for('product_page', pid=p.id) }}">{{ p.name }}</a></h3>
+      <div class="rating">
+        {% for s in p.rating|stars %}
+          {% if s == 'full' %}<span class="star full">★</span>{% elif s == 'half' %}<span class="star half">★</span>{% else %}<span class="star">☆</span>{% endif %}
+        {% endfor %}
+        <span class="rating-num">{{ '%.1f'|format(p.rating) }}</span>
+      </div>
+      <div class="price">$ {{ '%.2f'|format(p.price) }}</div>
+      <form class="add-form" data-pid="{{ p.id }}">
+        <input type="hidden" name="pid" value="{{ p.id }}">
+        <button class="btn primary block" type="submit">Add to cart</button>
+      </form>
+    </div>
+  </article>
+  {% else %}
+  <p>No products match your filters. Try clearing the search.</p>
+  {% endfor %}
+</section>
+{% endblock %}

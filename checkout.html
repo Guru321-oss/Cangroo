@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Checkout</h1>
+
+{% if not items %}
+  <p>Your cart is empty. <a href="{{ url_for('index') }}">Shop products →</a></p>
+{% else %}
+<div class="checkout-layout">
+  <form class="checkout-form" method="post" action="{{ url_for('checkout') }}">
+    <h2>Contact</h2>
+    <label>Full name <input required name="name" /></label>
+    <label>Email <input required type="email" name="email" /></label>
+
+    <h2>Shipping</h2>
+    <label>Address <input required name="address" /></label>
+    <div class="row2">
+      <label>City <input required name="city" /></label>
+      <label>Postal code <input required name="zip" /></label>
+    </div>
+
+    <h2>Payment</h2>
+    <label>Card number <input required name="card" inputmode="numeric" pattern="[0-9 ]{12,23}" /></label>
+    <div class="row2">
+      <label>Expiry <input required name="exp" placeholder="MM/YY" /></label>
+      <label>CVC <input required name="cvc" /></label>
+    </div>
+
+    <button class="btn primary block" type="submit">Place order</button>
+  </form>
+
+  <aside class="summary">
+    <h2>Order summary</h2>
+    <ul class="mini-list">
+      {% for row in items %}
+      <li>
+        <img src="{{ row.product.image }}" alt="" />
+        <span>{{ row.product.name }} × {{ row.qty }}</span>
+        <strong>$ {{ '%.2f'|format(row.line_total) }}</strong>
+      </li>
+      {% endfor %}
+    </ul>
+    <hr />
+    <p>Subtotal <strong id="sum-sub">$ {{ '%.2f'|format(subtotal) }}</strong></p>
+    <p>Shipping <strong id="sum-ship">$ {{ '%.2f'|format(shipping) }}</strong></p>
+    <p>Tax <strong id="sum-tax">$ {{ '%.2f'|format(tax) }}</strong></p>
+    <p class="total">Total <strong id="sum-total">$ {{ '%.2f'|format(total) }}</strong></p>
+  </aside>
+</div>
+{% endif %}
+{% endblock %}
